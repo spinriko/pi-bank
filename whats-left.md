@@ -8,7 +8,7 @@ mosi gpio10
 miso gpio9
 irq - unconnected
 gnd - gnd
-rst - gpio25
+rst - gpio3
 3.3 volt
 
 
@@ -23,3 +23,8 @@ Indicator GPIOs (LED and buzzer), plus any display details.
 
 
 Any level shifters or 5V components in the chain.
+
+================
+Before running on Pi, you will need the runtime libs installed on the Pi image (Blinka/CircuitPython stack and MFRC522 driver). Once your box is ready, we can run a quick hardware smoke test that repeatedly calls read_uid() and confirms real card reads end-to-end.
+
+================================

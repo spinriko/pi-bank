@@ -14,7 +14,7 @@ try:
 
     _spi = busio.SPI(board.SCK, MOSI=board.MOSI, MISO=board.MISO)
     _cs = digitalio.DigitalInOut(board.CE0)
-    _rst = digitalio.DigitalInOut(board.D25)
+    _rst = digitalio.DigitalInOut(board.D3)
     _reader = adafruit_mfrc522.MFRC522(_spi, _cs, _rst)
 except Exception:
     _reader = None
