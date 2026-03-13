@@ -1,0 +1,11 @@
+{
+  "device_id": "pi-reader-01",
+  "team_id": "team-alpha",
+  "zone_code": "ITROOM",
+  "api_url": "https://sentinel.example.com/access/validate",
+  "api_token": "replace-with-token",
+  "break_glass_mode": "deny",
+  "break_glass_allow_uids": [],
+  "log_path": "app.log.jsonl",
+  "log_max_bytes": 1048576
+}
