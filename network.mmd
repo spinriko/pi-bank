@@ -1,0 +1,17 @@
+```mermaid
+flowchart TD
+
+    subgraph CLOUD[Cloud Environment]
+        API[REST API Service]
+        DB[(PostgreSQL Database)]
+        API --> DB
+    end
+
+    P[Pi Device]
+    KEYPAD[Number Pad<br/>PIN Entry]
+
+    L[Developer Laptop]
+
+    KEYPAD --> P
+    P --> API
+    L --> API
