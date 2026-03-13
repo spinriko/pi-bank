@@ -2,7 +2,7 @@
 
 import json
 
-from logging.log_rotation import rotate_if_needed
+from sentinel.log_rotation import rotate_if_needed
 
 
 def log_event(event_dict):

@@ -4,7 +4,7 @@ from core.access_engine import process_attempt
 from core.break_glass import fallback_decision
 from core.credential_collector import collect_credentials
 from hardware import indicators, relay
-from logging import event_logger
+from sentinel import event_logger
 from network import net_status
 
 

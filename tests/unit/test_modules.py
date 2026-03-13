@@ -3,7 +3,6 @@ import json
 import os
 import sys
 import tempfile
-import types
 import unittest
 from io import StringIO
 from unittest import mock
@@ -12,15 +11,11 @@ APP_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "a
 if APP_DIR not in sys.path:
     sys.path.insert(0, APP_DIR)
 
-logging_pkg = types.ModuleType("logging")
-logging_pkg.__path__ = [os.path.join(APP_DIR, "logging")]
-sys.modules["logging"] = logging_pkg
-
 from config import config_loader
 from core import access_engine, break_glass, credential_collector
 from hardware import indicators, keypad, relay, rfid_reader
-from logging import event_logger, log_rotation
 from network import api_client, net_status
+from sentinel import event_logger, log_rotation
 
 
 class RfidReaderTests(unittest.TestCase):
@@ -331,7 +326,7 @@ class EventLoggerTests(unittest.TestCase):
             log_path = os.path.join(tmp, "events.jsonl")
 
             with mock.patch("config.config_loader.get", return_value=log_path), mock.patch(
-                "logging.event_logger.rotate_if_needed"
+                "sentinel.event_logger.rotate_if_needed"
             ):
                 event_logger.log_event({"access_granted": True})
 
@@ -345,7 +340,7 @@ class EventLoggerTests(unittest.TestCase):
             event = {"access_granted": False, "denial_reason": "INVALID_PIN"}
 
             with mock.patch("config.config_loader.get", return_value=log_path), mock.patch(
-                "logging.event_logger.rotate_if_needed"
+                "sentinel.event_logger.rotate_if_needed"
             ):
                 event_logger.log_event(event)
 
@@ -372,7 +367,7 @@ class EventLoggerTests(unittest.TestCase):
             }
 
             with mock.patch("config.config_loader.get", return_value=log_path), mock.patch(
-                "logging.event_logger.rotate_if_needed"
+                "sentinel.event_logger.rotate_if_needed"
             ):
                 event_logger.log_event(event)
 
@@ -382,7 +377,7 @@ class EventLoggerTests(unittest.TestCase):
 
     def test_handles_file_write_errors(self):
         with mock.patch("config.config_loader.get", return_value="/bad/path"), mock.patch(
-            "logging.event_logger.rotate_if_needed"
+            "sentinel.event_logger.rotate_if_needed"
         ), mock.patch("builtins.open", side_effect=OSError("write error")):
             with self.assertRaises(OSError):
                 event_logger.log_event({"access_granted": True})
@@ -395,7 +390,7 @@ class LogRotationTests(unittest.TestCase):
             with open(path, "w", encoding="utf-8") as f:
                 f.write("x" * 20)
 
-            with mock.patch("logging.log_rotation.get", side_effect=lambda k: {
+            with mock.patch("sentinel.log_rotation.get", side_effect=lambda k: {
                 "log_path": path,
                 "log_max_bytes": 10,
             }[k]):
@@ -410,7 +405,7 @@ class LogRotationTests(unittest.TestCase):
             with open(path, "w", encoding="utf-8") as f:
                 f.write("x" * 5)
 
-            with mock.patch("logging.log_rotation.get", side_effect=lambda k: {
+            with mock.patch("sentinel.log_rotation.get", side_effect=lambda k: {
                 "log_path": path,
                 "log_max_bytes": 10,
             }[k]):

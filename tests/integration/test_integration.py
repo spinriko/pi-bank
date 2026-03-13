@@ -2,7 +2,6 @@ import json
 import os
 import sys
 import tempfile
-import types
 import unittest
 from unittest import mock
 
@@ -10,13 +9,9 @@ APP_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "a
 if APP_DIR not in sys.path:
     sys.path.insert(0, APP_DIR)
 
-logging_pkg = types.ModuleType("logging")
-logging_pkg.__path__ = [os.path.join(APP_DIR, "logging")]
-sys.modules["logging"] = logging_pkg
-
 from core import access_engine, break_glass, credential_collector
 from hardware import indicators, relay
-from logging import event_logger, log_rotation
+from sentinel import event_logger, log_rotation
 
 
 class CredentialApiDecisionIntegrationTests(unittest.TestCase):
@@ -115,8 +110,8 @@ class LoggingIntegrationTests(unittest.TestCase):
             }
 
             with mock.patch("config.config_loader.get", return_value=log_path), mock.patch(
-                "logging.event_logger.rotate_if_needed", wraps=log_rotation.rotate_if_needed
-            ), mock.patch("logging.log_rotation.get", side_effect=lambda k: {
+                "sentinel.event_logger.rotate_if_needed", wraps=log_rotation.rotate_if_needed
+            ), mock.patch("sentinel.log_rotation.get", side_effect=lambda k: {
                 "log_path": log_path,
                 "log_max_bytes": 1,
             }[k]):
