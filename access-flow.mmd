@@ -1,0 +1,22 @@
+```mermaid
+flowchart TD
+
+    START([Start])
+
+    SCAN([User scans badge and enters PIN])
+
+    DECISION{Access granted?}
+
+    GRANTED([Unlock door])
+    FEEDBACK_Y([User feedback success])
+    FEEDBACK_N([User feedback failure])
+
+    LOG_Y([Log to DB success])
+    LOG_N([Log to DB failure])
+
+    END([End])
+
+    START --> SCAN --> DECISION
+
+    DECISION -->|Yes| GRANTED --> FEEDBACK_Y --> LOG_Y --> END
+    DECISION -->|No| FEEDBACK_N --> LOG_N --> END
