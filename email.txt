@@ -1,0 +1,81 @@
+Welcome to Project Sentinel!
+Our bank has decided that it needs to improve physical security for sensitive areas within our office.  Specifically, you and your team are being asked to design and prototype a smart door access control system that is built around a Raspberry Pi 5 computing device, and RFID reader, and RFID badge cards.
+Minimally, your solution must:
+Identify employees by their badge cards
+Verify their credentials
+Determine their access rights to the area
+Log access attempts
+Provide the employee some type of feedback indicating entry success or failure
+
+Each team has a Raspberry Pi 5 device, a Pi case/cooler/power kit, an RFID reader board, an RFID badge, LEDs, an LCD, buttons, sensors, jumper wires, breadboard, and some other ancillary items.  There is an online database with Sentinel Employee badge and other data as well.  You also have access to your own team schema in a postgreSQL database.  And you have access to whatever else you can get your hands on during this exercise!
+
+
+Accessing the “Sentinel Employee Database”
+------------------------------------------
+Base URL: https://urldefense.com/v3/__https://accesslab.bbweb.com__;!!CaGNpFFDcg0!NIdCn2sZtGPOtBtiiECrB1mAJ8mDuqz3wJVqv2Pv0J65ZKqh9T10-S7qlYNVOMEKsvf7WOp9bnctuw$ 
+Endpoint: POST /rpc/validate_access_api
+Headers: Content-Type: application/json
+Authorization: Basic Auth
+Auth ID: labteam
+Auth PWD: classyMcRib77
+
+Request Body:
+{"p_badge_uid": "RFID-A1B2C3D4","p_pin_code": "1234","p_zone_code": "ITROOM","p_source_device": "team1-pi","p_source_team": "Team1"
+
+Field Definitions
+p_badge_uid — RFID badge ID read from the card
+p_pin_code — 4-digit employee PIN
+p_zone_code — target protected area
+p_source_device — device name or controller name
+p_source_team — your team name
+
+Valid Team Combos
+-----------------
+“p_source_team”: “Team1”, “p_source_device”:”team1-pi”
+“p_source_team”: “Team2”, “p_source_device”:”team2-pi”
+“p_source_team”: “Team3”, “p_source_device”:”team3-pi”
+“p_source_team”: “Team4”, “p_source_device”:”team4-pi”
+“p_source_team”: “Team5”, “p_source_device”:”team5-pi”
+
+Access Request Responses
+------------------------
+Sample SUCCESS Response:
+[   {      "employee_id": 1,      "full_name": "Alice Nguyen",      "zone_code": "ITROOM",      "access_granted": true,      "denial_reason": null  }]
+
+Sample DENIED Response:
+[   {      "employee_id": 1,      "full_name": "Alice Nguyen",      "zone_code": "ITROOM",      "access_granted": false,      "denial_reason": "INVALID_PIN"   }]
+
+Possible Denial Reasons
+-----------------------
+UNKNOWN_BADGE
+EMPLOYEE_INACTIVE
+BADGE_INACTIVE
+UNKNOWN_ZONE
+ZONE_ACCESS_DENIED
+INVALID_PIN
+
+The Rooms
+---------
+There are five rooms that we need this extra protection on:
+EXEC
+HRFILE
+ITROOM
+LAB
+LOBBY
+
+The Pin Codes
+-------------
+Alice N. = 1234
+Bob M. = 2468
+Carol J. = 1357
+David P. = 4321
+Erin B. = 1111
+Frank T. = 2222
+
+Accessing your Online PostgreSQL Database
+-----------------------------------------
+My recommendation:  use PSQL and then you can…
+psql -h asb-arch-lab-db.postgres.database.azure.com -U teamN_user -d access_lab -p 5432 "sslmode=require“
+…where “teamN_user” becomes your team number (ex: team9_user).
+Your specific team schema is named “teamN_lab”…where the N is your team number.
+Your database password is the same as the root password for your Pi device.
