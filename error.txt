@@ -1,0 +1,2 @@
+python3 -c "import sys; sys.path.insert(0,'app'); import hardware.rfid_reader as r; print('reader_initialized=', r._reader is not None)"
+
