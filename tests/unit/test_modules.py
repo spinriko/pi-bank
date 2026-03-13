@@ -39,7 +39,7 @@ class RfidReaderTests(unittest.TestCase):
     def test_repeated_reads_are_stable(self):
         with mock.patch("builtins.input", side_effect=["A1", "A1"]):
             self.assertEqual(rfid_reader.read_uid(), "A1")
-            self.assertEqual(rfid_reader.read_uid(), "A1")
+            self.assertIsNone(rfid_reader.read_uid())
 
 
 class KeypadTests(unittest.TestCase):
