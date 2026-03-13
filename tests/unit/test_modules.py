@@ -1,3 +1,4 @@
+import base64
 import json
 import os
 import sys
@@ -97,7 +98,8 @@ class ApiClientTests(unittest.TestCase):
 
         with mock.patch("config.config_loader.get", side_effect=lambda k: {
             "api_url": "https://example.local/validate",
-            "api_token": "token",
+            "api_username": "user1",
+            "api_password": "pass1",
         }[k]), mock.patch("network.api_client.urllib.request.urlopen", return_value=response) as urlopen:
             result = api_client.validate_access("UID1", "1234", "ITROOM", "dev", "team")
 
@@ -110,6 +112,8 @@ class ApiClientTests(unittest.TestCase):
             self.assertEqual(payload["p_zone_code"], "ITROOM")
             self.assertEqual(payload["p_source_device"], "dev")
             self.assertEqual(payload["p_source_team"], "team")
+            expected_auth = "Basic " + base64.b64encode(b"user1:pass1").decode("ascii")
+            self.assertEqual(request.headers["Authorization"], expected_auth)
 
     def test_handles_http_200_deny(self):
         response = mock.Mock()
@@ -119,7 +123,8 @@ class ApiClientTests(unittest.TestCase):
 
         with mock.patch("config.config_loader.get", side_effect=lambda k: {
             "api_url": "https://example.local/validate",
-            "api_token": "token",
+            "api_username": "user1",
+            "api_password": "pass1",
         }[k]), mock.patch("network.api_client.urllib.request.urlopen", return_value=response):
             result = api_client.validate_access("UID1", "0000", "ITROOM", "dev", "team")
             self.assertFalse(result["access_granted"])
@@ -128,7 +133,8 @@ class ApiClientTests(unittest.TestCase):
     def test_handles_http_errors(self):
         with mock.patch("config.config_loader.get", side_effect=lambda k: {
             "api_url": "https://example.local/validate",
-            "api_token": "token",
+            "api_username": "user1",
+            "api_password": "pass1",
         }[k]), mock.patch("network.api_client.urllib.request.urlopen", side_effect=OSError("http error")):
             with self.assertRaises(OSError):
                 api_client.validate_access("UID1", "1234", "ITROOM", "dev", "team")
@@ -136,7 +142,8 @@ class ApiClientTests(unittest.TestCase):
     def test_handles_timeouts(self):
         with mock.patch("config.config_loader.get", side_effect=lambda k: {
             "api_url": "https://example.local/validate",
-            "api_token": "token",
+            "api_username": "user1",
+            "api_password": "pass1",
         }[k]), mock.patch("network.api_client.urllib.request.urlopen", side_effect=TimeoutError("timeout")):
             with self.assertRaises(TimeoutError):
                 api_client.validate_access("UID1", "1234", "ITROOM", "dev", "team")
@@ -149,7 +156,8 @@ class ApiClientTests(unittest.TestCase):
 
         with mock.patch("config.config_loader.get", side_effect=lambda k: {
             "api_url": "https://example.local/validate",
-            "api_token": "token",
+            "api_username": "user1",
+            "api_password": "pass1",
         }[k]), mock.patch("network.api_client.urllib.request.urlopen", return_value=response):
             with self.assertRaises(json.JSONDecodeError):
                 api_client.validate_access("UID1", "1234", "ITROOM", "dev", "team")
@@ -422,7 +430,8 @@ class ConfigLoaderTests(unittest.TestCase):
             "team_id": "t",
             "zone_code": "z",
             "api_url": "u",
-            "api_token": "tok",
+            "api_username": "user",
+            "api_password": "pass",
             "break_glass_mode": "deny",
             "break_glass_allow_uids": [],
             "log_path": "p",
@@ -453,7 +462,8 @@ class ConfigLoaderTests(unittest.TestCase):
             "team_id": "t",
             "zone_code": "z",
             "api_url": "u",
-            "api_token": "tok",
+            "api_username": "user",
+            "api_password": "pass",
             "break_glass_mode": "deny",
             "break_glass_allow_uids": [],
             "log_path": "p",
